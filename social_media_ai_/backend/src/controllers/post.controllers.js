@@ -20,10 +20,14 @@ export const createPostController = async (req, res) => {
         // upload image
         const uploaded = await uploadToImageKit(file.buffer,`${uuidv4()}-${file.originalname}`);
 
-        res.json({
+        // store in DB
+        const post = await PostModel.create({
             caption: caption,
-            imageUrl: uploaded.url,   // <-- IMPORTANT
+            image: uploaded.url,
+            user: req.user._id
         });
+
+        res.status(201).json({ message: "Post created successfully", post });
 
     }catch(error){
         console.log(error);
